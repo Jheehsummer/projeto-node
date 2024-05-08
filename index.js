@@ -6,6 +6,7 @@ const uuid = require("uuid")
 
 const pedidos = []
 
+// middleware da url e method
 const pesquisar = (request, response, next) =>{
     const {url, method} = request
     const requisicao = {url, method}
