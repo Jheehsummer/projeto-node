@@ -6,6 +6,7 @@ const uuid = require("uuid")
 
 const pedidos = []
 
+// middleware da url e method
 const pesquisar = (request, response, next) =>{
     const {url, method} = request
     const requisicao = {url, method}
@@ -24,13 +25,14 @@ const checkId = (request, response, next) =>{
     }
     request.pedidoIndex = index
     request.pedidoId = id
-
+    
     next()
 }
 
 app.get('/order', pesquisar, (request, response) =>{
+    
     return response.json(pedidos)
-  
+   
 })
 
 app.post('/order', pesquisar, (request, response) => {
@@ -51,9 +53,8 @@ app.put('/order/:id', checkId, pesquisar, (request, response) =>{
 
     const update = {id, orders, clientName, price}
     
-
     pedidos[index] = update
-
+    console.log(update)
     return response.json(update)
 })
 
@@ -67,11 +68,29 @@ app.delete('/order/:id', checkId, pesquisar, (request, response) =>{
     return response.status(201).json({message: "Deleted Order"})
 })
 
-app.get('/order/:id',(request, response) =>{
+app.get('/order/:id', checkId, pesquisar, (request, response) =>{
     
+    
+    const index = request.pedidoIndex
+    const search = pedidos[index]
+  
+   return response.status(201).json(search)
+}) 
 
-    return response.json(user)
-})
+
+app.patch('/order/:id', checkId, pesquisar, (request, response) =>{
+    
+    const index = request.pedidoIndex
+    const status = "pronto"
+    const pedido = {...pedidos[index], status}
+
+   return response.status(201).json(pedido)
+}) 
+
+
+
+
+
 
 
 
