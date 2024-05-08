@@ -6,16 +6,17 @@ const uuid = require("uuid")
 
 const pedidos = []
 
-// middleware da url e method
+
+// Middleware da url e method
 const pesquisar = (request, response, next) =>{
+    
     const {url, method} = request
     const requisicao = {url, method}
     console.log(requisicao)
 
     next()
 }
-
-// Middleware
+// Middleware para verificar se o ID existe
 const checkId = (request, response, next) =>{
     const {id} = request.params
     const index = pedidos.findIndex (pedido => pedido.id === id)
@@ -28,13 +29,13 @@ const checkId = (request, response, next) =>{
     
     next()
 }
-
+// Rota dos pedidos
 app.get('/order', pesquisar, (request, response) =>{
     
     return response.json(pedidos)
    
 })
-
+// Rota para criar pedidos
 app.post('/order', pesquisar, (request, response) => {
     const {orders, clientName, price} = request.body
     const status = "em preparação"
@@ -44,7 +45,7 @@ app.post('/order', pesquisar, (request, response) => {
     pedidos.push(pedido)
     return response.status(201).json(pedido)
 })
-
+// Rota para atualizar pedidos
 app.put('/order/:id', checkId, pesquisar, (request, response) =>{
     
     const {orders, clientName, price} = request.body
@@ -57,27 +58,24 @@ app.put('/order/:id', checkId, pesquisar, (request, response) =>{
     console.log(update)
     return response.json(update)
 })
-
+// Rota para deletar pedidos
 app.delete('/order/:id', checkId, pesquisar, (request, response) =>{
    
     const index = request.pedidoIndex
     
-
     pedidos.splice(index,1)
 
     return response.status(201).json({message: "Deleted Order"})
 })
-
+// Rota para buscar pedido especifico
 app.get('/order/:id', checkId, pesquisar, (request, response) =>{
-    
     
     const index = request.pedidoIndex
     const search = pedidos[index]
   
    return response.status(201).json(search)
 }) 
-
-
+// Rota para atualizar como pronto pedido especifico
 app.patch('/order/:id', checkId, pesquisar, (request, response) =>{
     
     const index = request.pedidoIndex
@@ -86,19 +84,7 @@ app.patch('/order/:id', checkId, pesquisar, (request, response) =>{
 
    return response.status(201).json(pedido)
 }) 
-
-
-
-
-
-
-
-
-
-
-
-
-
+// Port
 app.listen(port, () =>{
     console.log(`🤙 Server started on port ${port}`)
 })
